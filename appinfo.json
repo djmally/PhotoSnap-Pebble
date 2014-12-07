@@ -1,0 +1,17 @@
+{
+  "uuid": "3fb49826-013e-45d2-baaf-f10a2735556c",
+  "shortName": "photo_snap",
+  "longName": "photo_snap",
+  "companyName": "cis542",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
