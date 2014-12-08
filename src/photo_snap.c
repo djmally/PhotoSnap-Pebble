@@ -24,7 +24,7 @@ static bool send_to_phone(int key_press) {
         return false;
     }
 
-    dict_write_int(iter, key_press, &key_press, sizeof(key_press), false);
+    dict_write_int(iter, DATA_KEY, &key_press, sizeof(key_press), false);
     dict_write_end(iter);
 
     app_message_outbox_send();
