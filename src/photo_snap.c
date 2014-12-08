@@ -18,8 +18,8 @@ static bool send_to_phone(int key_press) {
     }
 
     DictionaryIterator *iter;
-    app_message_outbox_begin(&iter);
-    if(!iter) {
+    int res = app_message_outbox_begin(&iter);
+    if(iter == NULL) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "null iterator");
         return false;
     }
@@ -66,17 +66,14 @@ static void outbox_failed_handler(DictionaryIterator *failed,
     wasFirstMsg = false;
 }
 
+static void outbox_sent_handler(DictionaryIterator *iter, void *context) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Outbox send success!");
+}
+
 static void click_config_provider(void *context) {
     window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
     window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
     window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
-}
-
-static void app_message_init(void) {
-    // Register message handlers
-    app_message_register_inbox_received(inbox_received_handler);
-    app_message_register_inbox_dropped(inbox_dropped_handler);
-    app_message_register_outbox_failed(outbox_failed_handler);
 }
 
 static void window_load(Window *window) {
@@ -84,7 +81,6 @@ static void window_load(Window *window) {
     GRect bounds = layer_get_bounds(window_layer);
 
     text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-    text_layer_set_text(text_layer, "Press a button");
     text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
     layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
@@ -99,7 +95,15 @@ static void init(void) {
     wasFirstMsg = false;
     window = window_create();
     window_set_click_config_provider(window, click_config_provider);
-    app_message_init();
+    // Register message handlers
+    app_message_register_inbox_received(inbox_received_handler);
+    app_message_register_inbox_dropped(inbox_dropped_handler);
+    app_message_register_outbox_failed(outbox_failed_handler);
+    app_message_register_outbox_sent(outbox_sent_handler);
+
+    app_message_open(app_message_inbox_size_maximum(),
+                     app_message_outbox_size_maximum());
+
     window_set_window_handlers(window, (WindowHandlers) {
         .load = window_load,
         .unload = window_unload,

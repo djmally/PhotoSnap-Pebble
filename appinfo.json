@@ -9,7 +9,10 @@
     "watchface": false
   },
   "appKeys": {
-    "dummy": 0
+    "select": 0,
+    "up": 1,
+    "down": 2,
+    "data": 0
   },
   "resources": {
     "media": []
